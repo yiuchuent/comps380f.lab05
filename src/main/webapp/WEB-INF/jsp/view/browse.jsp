@@ -7,17 +7,13 @@
     <body>
         <h1>Product List</h1>
         <a href="<c:url value="/shop?action=viewCart" />">View Cart</a><br /><br />
-        <%
-            @SuppressWarnings(  "unchecked")
-            Map<Integer, String> products
-                    = (Map<Integer, String>) request.getAttribute("products");
+        <c:forEach items="${products}" var="product">
 
-            for (int id : products.keySet()) {
-        %><a href="<c:url value="shop">
-               <c:param name="action" value="addToCart" />
-               <c:param name="productId" value="<%= Integer.toString(id)%>" />
-           </c:url>"><%= products.get(id)%></a><br />
-        <% }%>
+            <a href="<c:url value="shop">
+                   <c:param name="action" value="addToCart" />
+                   <c:param name="productId" value="${product.key}" />
+               </c:url>">${product.value}</a><br />
+        </c:forEach>
     </body>
 </html>
 

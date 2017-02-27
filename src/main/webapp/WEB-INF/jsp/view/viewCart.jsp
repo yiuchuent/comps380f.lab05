@@ -1,4 +1,3 @@
-<%@ page import="java.util.Map" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -9,22 +8,20 @@
         <h1>View Cart</h1>
         <a href="<c:url value="/shop" />">Product List</a><br /><br />
         <%
-            @SuppressWarnings("unchecked")
-            Map<Integer, String> products
-                    = (Map<Integer, String>) request.getAttribute("products");
+        %>
+        <c:choose>
+            <c:when test="${empty cart}">
+                Your cart is empty 
+            </c:when>
+            <c:otherwise>
+                <ul>
+                    <c:forEach items="${cart}" var="item">
+                    <li>${products[item.key]} (qty: ${item.value})</li>
 
-            @SuppressWarnings("unchecked")
-            Map<Integer, Integer> cart
-                    = (Map<Integer, Integer>) session.getAttribute("cart");
+                    </c:forEach>
+                </ul>
 
-            if (cart == null || cart.size() == 0) { %> 
-        Your cart is empty 
-        <%  } else { %>
-        <ul>
-            <% for (int id : cart.keySet()) {%>
-            <li><%=products.get(id)%> (qty: <%=cart.get(id)%>) </li>
-                <% } %>
-        </ul>
-        <% }%>
+            </c:otherwise>
+        </c:choose>
     </body>
 </html>

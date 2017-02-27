@@ -1,17 +1,14 @@
-<%@ page import="java.util.Vector, edu.ouhk.comps380f.lab05.PageVisit" %>
+<%@ page import="edu.ouhk.comps380f.lab05.*" %>
 <%@ page import="java.util.Date, java.text.SimpleDateFormat" %>
-<%!
-    private static String toString(long timeInterval) {
-        if (timeInterval < 1_000)
-            return "less than one second";
-        if (timeInterval < 60_000)
-            return (timeInterval / 1_000) +  " seconds";
-        return "about" + (timeInterval / 60_000) + " minutes";
-    }
-%>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>       
+
 <%
     SimpleDateFormat f = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z");
 %>
+
+<jsp:useBean id="timeValue" class="java.util.Date"></jsp:useBean>
+<c:set target="${timeValue}" property="time" value="${pageContext.session.creationTime}"/>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -21,29 +18,23 @@
         <h1>Session Activity</h1>
 
         <h2>Session properties</h2>
-        Session ID: <%= session.getId() %><br />
-        Session is new: <%= session.isNew() %><br />
-        Session created: <%= f.format(new Date(session.getCreationTime())) %><br />
-        
+        Session ID: ${pageContext.session.id}<br />
+        Session is new: ${pageContext.session["new"]}<br />
+        Session created: <fmt:formatDate value="${timeValue}" pattern="EEE, d MMM yyyy HH:mm:ss Z" /><br />
+
         <h2>Page activity in this session</h2>
-        <%
-            @SuppressWarnings("unchecked")
-            Vector<PageVisit> visits = 
-                     (Vector<PageVisit>) session.getAttribute("activity");
-            
-            for (PageVisit visit : visits) {
-                out.print(visit.getRequest());
-                if (visit.getIpAddress() != null)
-                        out.print(" from IP "                                 
-                            + visit.getIpAddress().getHostAddress());
-                out.print(" (" + f.format(new Date(visit.getEnteredTimestamp())));
-                if (visit.getLeftTimestamp() != null) {
-                    out.println(", stayed for " + toString(
-                            visit.getLeftTimestamp() - visit.getEnteredTimestamp()
-                    ));
-                }
-                out.println(")<br />");
-            }
-        %>
+        <c:forEach var="visit" items="${activity}">
+            ${visit.request} 
+            <c:if test="${not empty visit.ipAddress}">
+                from IP ${visit.ipAddress.hostAddress}
+            </c:if>
+            <c:set target="${timeValue}" property="time" value="${visit.enteredTimestamp}"/>
+            (<fmt:formatDate value="${timeValue}" pattern="EEE, d MMM yyyy HH:mm:ss Z" />
+            <c:if test="${not empty visit.leftTimestamp}">, 
+                stayed for ${visit.toString(visit.leftTimestamp - visit.enteredTimestamp)}
+            </c:if>
+            ) <br/>
+        </c:forEach>
+
     </body>
 </html>

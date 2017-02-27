@@ -1,4 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" language="java" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>         
 <!DOCTYPE html>
 <html>
     <head>
@@ -6,15 +7,18 @@
     </head>
     <body>
         <h1>Your Selections</h1>
-        <% String[] fruits = request.getParameterValues("fruit");%>
-        <% if (fruits == null) { %>
-        You did not select any fruits
-        <% } else { %>
-        <ul>
-            <% for (String fruit : fruits) { %>
-            <li><%= fruit %></li>
-            <% } %>
-        </ul>
-        <% } %>
+        <c:choose>
+            <c:when test="${empty paramValues.fruit}">
+                You did not select any fruits.
+            </c:when>
+            <c:otherwise>
+                <ul>
+                    <c:forEach var="f" items="${paramValues.fruit}">
+                        <li>${f}</li>
+                    </c:forEach>
+                </ul>
+            </c:otherwise>
+        </c:choose>
+
     </body>
 </html>

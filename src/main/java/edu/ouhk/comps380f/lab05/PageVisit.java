@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.net.InetAddress;
 
 public class PageVisit implements Serializable {
+
     private long enteredTimestamp;
     private Long leftTimestamp;
     private String request;
@@ -39,5 +40,15 @@ public class PageVisit implements Serializable {
 
     public void setIpAddress(InetAddress ipAddress) {
         this.ipAddress = ipAddress;
+    }
+
+    public static String toString(long timeInterval) {
+        if (timeInterval < 1_000) {
+            return "less than one second";
+        }
+        if (timeInterval < 60_000) {
+            return (timeInterval / 1_000) + " seconds";
+        }
+        return "about" + (timeInterval / 60_000) + " minutes";
     }
 }
